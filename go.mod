@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai v0.6.0
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.12.0
+	github.com/joho/godotenv v1.5.1
 	github.com/spf13/cobra v1.8.1
 )
 
