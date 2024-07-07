@@ -28,15 +28,17 @@ var questionCmd = &cobra.Command{
 			return
 		}
 
-		// Set environment variables
-		azureOpenAIKey := os.Getenv("AOAI_COMPLETIONS_API_KEY")
-		modelDeployment := os.Getenv("AOAI_COMPLETIONS_MODEL")
-		azureOpenAIEndpoint := os.Getenv("AOAI_COMPLETIONS_ENDPOINT")
+		azureOpenAIKey := os.Getenv("AZURE_OPENAI_API_KEY")
+		modelDeploymentID := os.Getenv("YOUR_MODEL_DEPLOYMENT_NAME")
+		maxTokens := int32(400)
+		azureOpenAIEndpoint := os.Getenv("AZURE_OPENAI_ENDPOINT")
 
-		if azureOpenAIKey == "" || modelDeployment == "" || azureOpenAIEndpoint == "" {
-			fmt.Fprintf(os.Stderr, "Skipping command, environment variables missing\n")
+		if azureOpenAIKey == "" || modelDeploymentID == "" || azureOpenAIEndpoint == "" {
+			fmt.Fprintf(os.Stderr, "Skipping example, environment variables missing\n")
 			return
 		}
+
+		keyCredential := azcore.NewKeyCredential(azureOpenAIKey)
 
 		// Get question from user input
 		reader := bufio.NewReader(os.Stdin)
@@ -44,32 +46,75 @@ var questionCmd = &cobra.Command{
 		question, _ := reader.ReadString('\n')
 		fmt.Println("You entered:", question)
 
-		keyCredential := azcore.NewKeyCredential(azureOpenAIKey)
-
 		client, err := azopenai.NewClientWithKeyCredential(azureOpenAIEndpoint, keyCredential, nil)
 
 		if err != nil {
-			// TODO: Update the following line with specific error handling logic
+			// TODO: Update with application specific error handling logic
 			log.Printf("ERROR: %s", err)
 			return
 		}
 
-		resp, err := client.GetCompletions(context.TODO(), azopenai.CompletionsOptions{
-			// Prompt: []string{"What is Azure OpenAI, in 20 words or less"},
-			Prompt:         []string{question},
-			MaxTokens:      to.Ptr(int32(2048)),
-			Temperature:    to.Ptr(float32(0.0)),
-			DeploymentName: &modelDeployment,
+		// NOTE: all messages, regardless of role, count against token usage for this API.
+		messages := []azopenai.ChatRequestMessageClassification{
+			// You set the tone and rules of the conversation with a prompt as the system role.
+			&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a helpful assistant to help with all sorts of user questions. If you do not know the answer, then your response must be 'I am not smart enough to answer that question. Please try again or ask ChatGPT instead.'.")},
+
+			// The user asks a question
+			// &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent("Does Azure OpenAI support customer managed keys?")},
+			&azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent(question)},
+
+			// The reply would come back from the model. You'd add it to the conversation so we can maintain context.
+			// &azopenai.ChatRequestAssistantMessage{Content: to.Ptr("Yes, customer managed keys are supported by Azure OpenAI")},
+
+			// The user answers the question based on the latest reply.
+			// &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent("What other Azure Services support customer managed keys?")},
+
+			// from here you'd keep iterating, sending responses back from ChatGPT
+		}
+
+		gotReply := false
+
+		resp, err := client.GetChatCompletions(context.TODO(), azopenai.ChatCompletionsOptions{
+			// NOTE: all messages count against token usage for this API.
+			Messages:       messages,
+			DeploymentName: &modelDeploymentID,
+			MaxTokens:      &maxTokens,
 		}, nil)
 
 		if err != nil {
-			// TODO: Update the following line with specific error handling logic
+			// TODO: Update with application specific error handling logic
 			log.Printf("ERROR: %s", err)
 			return
 		}
 
 		for _, choice := range resp.Choices {
-			fmt.Fprintf(os.Stderr, "Result: %s\n", *choice.Text)
+			gotReply = true
+
+			if choice.ContentFilterResults != nil {
+				fmt.Fprintf(os.Stderr, "Content filter results\n")
+
+				if choice.ContentFilterResults.Error != nil {
+					fmt.Fprintf(os.Stderr, "  Error:%v\n", choice.ContentFilterResults.Error)
+				}
+
+				fmt.Fprintf(os.Stderr, "  Hate: sev: %v, filtered: %v\n", *choice.ContentFilterResults.Hate.Severity, *choice.ContentFilterResults.Hate.Filtered)
+				fmt.Fprintf(os.Stderr, "  SelfHarm: sev: %v, filtered: %v\n", *choice.ContentFilterResults.SelfHarm.Severity, *choice.ContentFilterResults.SelfHarm.Filtered)
+				fmt.Fprintf(os.Stderr, "  Sexual: sev: %v, filtered: %v\n", *choice.ContentFilterResults.Sexual.Severity, *choice.ContentFilterResults.Sexual.Filtered)
+				fmt.Fprintf(os.Stderr, "  Violence: sev: %v, filtered: %v\n", *choice.ContentFilterResults.Violence.Severity, *choice.ContentFilterResults.Violence.Filtered)
+			}
+
+			if choice.Message != nil && choice.Message.Content != nil {
+				fmt.Fprintf(os.Stderr, "Content[%d]: %s\n", *choice.Index, *choice.Message.Content)
+			}
+
+			if choice.FinishReason != nil {
+				// this choice's conversation is complete.
+				fmt.Fprintf(os.Stderr, "Finish reason[%d]: %s\n", *choice.Index, *choice.FinishReason)
+			}
+		}
+
+		if gotReply {
+			fmt.Fprintf(os.Stderr, "Received chat completions reply\n")
 		}
 
 	},
