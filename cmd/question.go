@@ -116,7 +116,6 @@ var questionCmd = &cobra.Command{
 		if gotReply {
 			fmt.Fprintf(os.Stderr, "Received chat completions reply\n")
 		}
-
 	},
 }
 
