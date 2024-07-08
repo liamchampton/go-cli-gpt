@@ -13,6 +13,17 @@ Once this has opened you will need to wait just a moment longer for the post cre
 
 ![Post create command](./assets/post-create-command.png)
 
+## Create your .env file
+In the root of the project create a `.env` file and add the following lines to it:
+
+```bash
+AZURE_OPENAI_API_KEY=<your-openai-api-key>
+YOUR_MODEL_DEPLOYMENT_NAME=<your-model-deployment-name>
+AZURE_OPENAI_ENDPOINT=<your-endpoint-url>
+```
+
+NOTE: These values can be found in your Azure OpenAI resource.
+
 ## Running the CLI
 run the commands:
 
