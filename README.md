@@ -3,6 +3,14 @@ This is a CLI designed to take GPT to the terminal. It utilises the use of Azure
 
 This project is using https://github.com/spf13/cobra as a foundation.
 
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| question | Ask a question to generate text based on the input. |
+| image | Create an image from a prompt using the OpenAI API and DALLE<X> model |
+
+
 ## Getting started
 
 To get started, fork or clone this repository to your own location or open this repository in a codespace.
@@ -35,7 +43,15 @@ go build
 Ask your first question:
     
 ```bash
-./go-cli-gpt question <ask-your-question>
+./go-cli-gpt question
+> Enter your question: <your-question>
+```
+
+Create your first AI generated image:
+    
+```bash
+./go-cli-gpt image
+> What image do you want to create? <your-prompt>
 ```
 
 ## Commands
