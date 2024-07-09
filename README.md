@@ -10,6 +10,11 @@ This project is using https://github.com/spf13/cobra as a foundation.
 | question | Ask a question to generate text based on the input. |
 | image | Create an image from a prompt using the OpenAI API and DALLE<X> model |
 
+## Prerequisites
+- Azure account
+- GPT Model deployed in Azure OpenAI
+- DALLE model deployed in Azure OpenAI
+
 
 ## Getting started
 
