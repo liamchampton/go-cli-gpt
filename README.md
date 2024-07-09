@@ -28,6 +28,7 @@ In the root of the project create a `.env` file and add the following lines to i
 AZURE_OPENAI_API_KEY=<your-openai-api-key>
 YOUR_MODEL_DEPLOYMENT_NAME=<your-model-deployment-name>
 AZURE_OPENAI_ENDPOINT=<your-endpoint-url>
+DALLE_MODEL_NAME=<your-dalle-model-name>
 ```
 
 NOTE: These values can be found in your Azure OpenAI resource.
