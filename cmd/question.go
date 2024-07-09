@@ -20,7 +20,6 @@ var questionCmd = &cobra.Command{
 	Short: "ask gpt a question",
 	Long:  `use this command to ask gpt a question and get an answer in your terminal`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// cmd.Help()
 
 		// Load the .env file
 		if err := godotenv.Load(); err != nil {
