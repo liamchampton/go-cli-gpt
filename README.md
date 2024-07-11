@@ -5,10 +5,10 @@ This project is using https://github.com/spf13/cobra as a foundation.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| question | Ask a question to generate text based on the input. |
-| image | Create an image from a prompt using the OpenAI API and DALLE<X> model |
+| Command  | Flag(s)           | Description                                             |
+|----------|----------------|---------------------------------------------------------|
+| question | `--local`/`-l`       | Ask a question to generate text based on the input.     |
+| image    | n/a    | Create an image from a prompt using the OpenAI API and DALLE<X> model |
 
 ## Prerequisites
 - Azure account
