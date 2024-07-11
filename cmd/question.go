@@ -58,7 +58,7 @@ var questionCmd = &cobra.Command{
 			azureOpenAIEndpoint := os.Getenv("AZURE_OPENAI_ENDPOINT")
 
 			if azureOpenAIKey == "" || modelDeploymentID == "" || azureOpenAIEndpoint == "" {
-				fmt.Fprintf(os.Stderr, "Skipping example, environment variables missing\n")
+				fmt.Fprintf(os.Stderr, "Unable to continue. Environment variables missing\n")
 				return
 			}
 
@@ -78,7 +78,7 @@ var questionCmd = &cobra.Command{
 			// NOTE: all messages, regardless of role, count against token usage for this API.
 			messages := []azopenai.ChatRequestMessageClassification{
 				// You set the tone and rules of the conversation with a prompt as the system role.
-				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a helpful assistant to help with all sorts of user questions. If you do not know the answer, then your response must be 'I am not smart enough to answer that question. Please try again or ask ChatGPT instead.'.")},
+				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a personal assistant to help with generic user questions. You can provide information on a wide range of topics.")},
 
 				// The user asks a question
 				// &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent("Does Azure OpenAI support customer managed keys?")},
