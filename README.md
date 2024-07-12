@@ -14,7 +14,7 @@ This project is using https://github.com/spf13/cobra as a foundation.
 - Azure account
 - GPT Model deployed in Azure OpenAI
 - DALLE model deployed in Azure OpenAI
-- Local model for Ollama installed (for local/offline use only)
+- Local model for Ollama installed (for local/offline use only). Checkout the [Ollama docs](https://ollama.com/) on how to install the models.
 
 
 ## Getting started
