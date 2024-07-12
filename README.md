@@ -35,12 +35,13 @@ AZURE_OPENAI_API_KEY=<your-openai-api-key>
 YOUR_MODEL_DEPLOYMENT_NAME=<your-model-deployment-name>
 AZURE_OPENAI_ENDPOINT=<your-endpoint-url>
 DALLE_MODEL_NAME=<your-dalle-model-name>
+LOCAL_MODEL=<your-local-model-name>
 ```
 
-NOTE: These values can be found in your Azure OpenAI resource.
+> **Note:** The remote model values can be found in your Azure OpenAI resource.
 
 ## Running the CLI
-run the commands:
+Once you have populated the `.env` file with the correct values, you can build the CLI and run it in your terminal. To do this, run the commands:
 
 ```bash
 go build
@@ -48,11 +49,13 @@ go build
 ```
 
 Ask your first question:
-    
+
 ```bash
 ./go-cli-gpt question
 > Enter your question: <your-question>
 ```
+
+> **Note:** To ask a question using the local model, you can use the `--local` flag. This will generate text based on the local model you have installed.
 
 Create your first AI generated image:
     
