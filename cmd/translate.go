@@ -16,10 +16,10 @@ import (
 )
 
 // exampleCmd represents the example command
-var questionCmd = &cobra.Command{
-	Use:   "question",
-	Short: "ask the LLM a question",
-	Long:  `use this command to ask a generic question and get an answer in your terminal`,
+var translateCmd = &cobra.Command{
+	Use:   "translate",
+	Short: "ask the LLM to translate a sentence",
+	Long:  `use this command to ask the LLM to translate a sentence from one language to another`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		// Load the .env file
@@ -38,10 +38,16 @@ var questionCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 
-			question := GetUserInput("Please enter your question: ")
+			languageA := GetUserInput("Please enter the language you want to translate from: ")
+
+			languageB := GetUserInput("Please enter the language you want to translate to: ")
+
+			sentence := GetUserInput("Please enter the sentence or word you want to translate: ")
+
+			prompt := "You are a professional translator and multi-linguist. You are to strictly only answer language translation questions from the user. You must now translate the following sentence from " + languageA + " to " + languageB + ": " + sentence
 
 			ctx := context.Background()
-			completion, err := llms.GenerateFromSinglePrompt(ctx, llm, question)
+			completion, err := llms.GenerateFromSinglePrompt(ctx, llm, prompt)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -63,8 +69,13 @@ var questionCmd = &cobra.Command{
 
 			keyCredential := azcore.NewKeyCredential(azureOpenAIKey)
 
-			// Get question from user input
-			question := GetUserInput("Please enter your question: ")
+			languageA := GetUserInput("Please enter the language you want to translate from: ")
+
+			languageB := GetUserInput("Please enter the language you want to translate to: ")
+
+			sentence := GetUserInput("Please enter the sentence or word you want to translate: ")
+
+			prompt := "You must now translate the following sentence from " + languageA + " to " + languageB + ": " + sentence
 
 			client, err := azopenai.NewClientWithKeyCredential(azureOpenAIEndpoint, keyCredential, nil)
 
@@ -77,11 +88,11 @@ var questionCmd = &cobra.Command{
 			// NOTE: all messages, regardless of role, count against token usage for this API.
 			messages := []azopenai.ChatRequestMessageClassification{
 				// You set the tone and rules of the conversation with a prompt as the system role.
-				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a personal assistant to help with generic user questions. You can provide information on a wide range of topics.")},
+				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a professional translator and multi-linguist. You are to strictly only answer language translation questions from the user.")},
 
 				// The user asks a question
 				// &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent("Does Azure OpenAI support customer managed keys?")},
-				&azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent(question)},
+				&azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent(prompt)},
 
 				// The reply would come back from the model. You'd add it to the conversation so we can maintain context.
 				// &azopenai.ChatRequestAssistantMessage{Content: to.Ptr("Yes, customer managed keys are supported by Azure OpenAI")},
@@ -141,10 +152,10 @@ var questionCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(questionCmd)
+	rootCmd.AddCommand(translateCmd)
 
-	// Add local flag to question command
-	questionCmd.Flags().BoolP("local", "l", false, "Use local model")
+	// Add local flag to translate command
+	translateCmd.Flags().BoolP("local", "l", false, "Use local model")
 
 	// Here you will define your flags and configuration settings.
 
