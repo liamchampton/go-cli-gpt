@@ -58,6 +58,8 @@ Ask your first question:
 
 > **Note:** To ask a question using the local model, you can use the `--local` flag. This will generate text based on the local model you have installed.
 
+![Local Llama question](./assets/local-llama-question.png)
+
 Create your first AI generated image:
     
 ```bash
