@@ -28,12 +28,14 @@ var questionCmd = &cobra.Command{
 			return
 		}
 
-		// check for "local" flag
+		// check for "local" flag - if local flag is set, use offline model
 		localFlag := cmd.Flags().Lookup("local")
 		if localFlag != nil && localFlag.Changed {
-			// if local flag is set, use offline model
-			log.Printf("Using local model %s", os.Getenv("LOCAL_MODEL"))
-			llm, err := ollama.New(ollama.WithModel(os.Getenv("LOCAL_MODEL")))
+
+			selectedOption := GetLocalModel()
+
+			log.Printf("Using local model %s", selectedOption)
+			llm, err := ollama.New(ollama.WithModel(selectedOption))
 			if err != nil {
 				log.Fatal(err)
 			}

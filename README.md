@@ -36,7 +36,6 @@ AZURE_OPENAI_API_KEY=<your-openai-api-key>
 YOUR_MODEL_DEPLOYMENT_NAME=<your-model-deployment-name>
 AZURE_OPENAI_ENDPOINT=<your-endpoint-url>
 DALLE_MODEL_NAME=<your-dalle-model-name>
-LOCAL_MODEL=<your-local-model-name>
 ```
 
 > **Note:** The remote model values can be found in your Azure OpenAI resource.
