@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var image = &cobra.Command{
+var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "Create an image from a prompt",
 	Long:  `Create an image from a prompt using the OpenAI API and DALLE<X> model`,
@@ -62,26 +63,42 @@ var image = &cobra.Command{
 			resp, err := http.Head(*generatedImage.URL)
 
 			if err != nil {
-				//  TODO: Update the following line with your application-specific error handling logic
 				log.Fatalf("ERROR: %s", err)
 			}
 
 			fmt.Fprintf(os.Stderr, "Image generated, HEAD request on URL returned %d \n", resp.StatusCode)
 			fmt.Fprintf(os.Stdout, "Image URL: %s\n", *generatedImage.URL)
+
+			downloadFlag := cmd.Flags().Lookup("download")
+			if downloadFlag != nil && downloadFlag.Changed {
+				fmt.Println("Downloading image...")
+				url := *generatedImage.URL
+
+				response, err := http.Get(url)
+				if err != nil {
+					log.Fatal(err)
+				}
+				defer response.Body.Close()
+
+				file, err := os.CreateTemp("/tmp", "*.jpg")
+				if err != nil {
+					log.Fatal("Error creating file:", err)
+					return
+				}
+				defer file.Close()
+
+				_, err = io.Copy(file, response.Body)
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Println("Success!\nYour image has been downloaded and stored in your /tmp folder with the filename: ", file.Name())
+			}
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(image)
+	rootCmd.AddCommand(imageCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// exampleCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// exampleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	imageCmd.Flags().BoolP("download", "d", false, "download image to local device")
 }

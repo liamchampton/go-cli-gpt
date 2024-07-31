@@ -8,7 +8,7 @@ This project is using https://github.com/spf13/cobra as a foundation.
 | Command  | Flag(s)           | Description                                             |
 |----------|----------------|---------------------------------------------------------|
 | question | `--local`/`-l`       | Ask a question to generate text based on the input.     |
-| image    | n/a    | Create an image from a prompt using the OpenAI API and DALLE<X> model |
+| image    | `--download`/`-d`    | Create an image from a prompt using the OpenAI API and DALLE<X> model |
 | translate | `--local`/`-l`    | Translate a sentence or word from one language to another |
 
 ## Prerequisites
