@@ -15,7 +15,7 @@ func GetUserInput(userPrint string) string {
 	return userInput
 }
 
-func GetLocalModel() string {
+func GetLocalModel() (string, error) {
 	options := []string{"llama3.1", "phi3", "mistral"}
 
 	var selectedOption string
@@ -26,9 +26,9 @@ func GetLocalModel() string {
 	err := survey.AskOne(prompt, &selectedOption)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error selecting local model: %v\n", err)
-		return ""
+		return "", err
 	}
 
 	fmt.Printf("You selected: %s\n", selectedOption)
-	return selectedOption
+	return selectedOption, nil
 }

@@ -32,7 +32,10 @@ var translateCmd = &cobra.Command{
 		localFlag := cmd.Flags().Lookup("local")
 		if localFlag != nil && localFlag.Changed {
 
-			selectedOption := GetLocalModel()
+			selectedOption, err := GetLocalModel()
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			log.Printf("Using local model %s", selectedOption)
 			llm, err := ollama.New(ollama.WithModel(selectedOption))
