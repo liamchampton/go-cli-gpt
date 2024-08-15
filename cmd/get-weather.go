@@ -46,11 +46,17 @@ var weatherCmd = &cobra.Command{
 			return
 		}
 
+		// Get user input from the command line
+		// This is the natural language query we want to process
+		// Prints: What's the weather like in London in the UK? Give this to me in celsius
+		userInput := GetUserInput("Tell me where you want the weather for: ")
+
 		resp, err := client.GetChatCompletions(context.TODO(), azopenai.ChatCompletionsOptions{
 			DeploymentName: &modelDeploymentID,
 			Messages: []azopenai.ChatRequestMessageClassification{
 				&azopenai.ChatRequestUserMessage{
-					Content: azopenai.NewChatRequestUserMessageContent("What's the weather like in London in the UK? Give this to me in celsius"),
+					// Content: azopenai.NewChatRequestUserMessageContent("What's the weather like in London in the UK? Give this to me in celsius"),
+					Content: azopenai.NewChatRequestUserMessageContent(userInput),
 				},
 			},
 			Tools: []azopenai.ChatCompletionsToolDefinitionClassification{
@@ -106,7 +112,29 @@ var weatherCmd = &cobra.Command{
 		// Parameters: azopenai_test.location{Location:"London, UK", Unit:"celsius"}
 		fmt.Fprintf(os.Stderr, "Parameters: %#v\n", *funcParams)
 
+		// Call the function with the parameters
+		weatherData := get_current_weather(funcParams.Location, funcParams.Unit)
+		fmt.Println("weather:" + weatherData)
+
 	},
+}
+
+func get_current_weather(location string, unit string) string {
+	// Mock data
+	data := map[string]interface{}{
+		"location":    location,
+		"unit":        unit,
+		"temperature": 20, // Mock temperature value
+	}
+
+	// Convert to JSON string
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return ""
+	}
+
+	return string(jsonData)
 }
 
 func init() {

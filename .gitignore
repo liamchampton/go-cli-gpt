@@ -23,4 +23,6 @@ go-cli-template
 # Go workspace file
 go.work
 .env
+prompts.txt
+
 
